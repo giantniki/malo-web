@@ -20,6 +20,9 @@
   <meta name="twitter:image" content="/og-image-1200x630.png">
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#111111">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -28,7 +31,7 @@
       overflow: hidden;            /* no scroll */
       overscroll-behavior: none;
       background: #000;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: "Bodoni Moda", "Bodoni MT", Georgia, serif;
     }
 
     .hero {
@@ -130,12 +133,39 @@
       }
       .brand .name { color: #111; }
       .brand .tag  { color: rgba(17,17,17,.7); }
-      .brand img { width: clamp(110px, 32vw, 160px); }
-      .copy .line1 { color: #111; }
-      .copy .line2 { color: rgba(17,17,17,.75); }
+
+      /* Logo arriba, centrado horizontal */
+      .brand {
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+      }
+      .brand img { width: clamp(140px, 42vw, 220px); }
+
+      /* Textos abajo centrados, elevados para dejar sitio al botón debajo */
+      .copy {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        bottom: calc(clamp(16px, 4vw, 48px) + 72px);
+        width: max-content;
+        max-width: 88vw;
+        text-align: center;
+      }
+      .copy .line1 { color: #111; font-size: clamp(22px, 6vw, 30px); font-weight: 600; }
+      .copy .line2 { color: rgba(17,17,17,.75); font-size: clamp(18px, 4.8vw, 24px); }
+
+      /* Botón debajo de los textos, centrado */
+      .contact {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+      }
       .contact a {
         color: #111;
         border-color: rgba(17,17,17,.7);
+        font-size: clamp(15px, 3.6vw, 18px);
+        padding: .8em 2.2em;
       }
       .contact a:hover,
       .contact a:active { background: #111; color: #fff; }
