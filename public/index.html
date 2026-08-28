@@ -63,20 +63,10 @@
       left: clamp(16px, 4vw, 48px);
       z-index: 2;
     }
-    .brand .name {
-      font-size: clamp(28px, 5vw, 56px);
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      line-height: 1;
-      color: #fff;
-    }
-    .brand .tag {
-      margin-top: .5em;
-      font-size: clamp(11px, 1.4vw, 14px);
-      font-weight: 500;
-      letter-spacing: 0.42em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.85);
+    .brand img {
+      display: block;
+      width: clamp(120px, 18vw, 220px);
+      height: auto;
     }
 
     /* Copys — abajo a la izquierda */
@@ -126,6 +116,7 @@
     /* ===== Mobile: fondo blanco, vídeo 100vw proporcional, contenido oscuro ===== */
     @media (max-width: 768px) {
       html, body { background: #fff; }
+      .brand img { width: clamp(110px, 32vw, 160px); }
       .bg-video {
         inset: auto;
         top: 50%;
@@ -137,6 +128,7 @@
       }
       .brand .name { color: #111; }
       .brand .tag  { color: rgba(17,17,17,.7); }
+      .brand img { width: clamp(110px, 32vw, 160px); }
       .copy .line1 { color: #111; }
       .copy .line2 { color: rgba(17,17,17,.75); }
       .contact a {
@@ -153,8 +145,7 @@
     <video class="bg-video" src="/video.mp4" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video>
 
     <header class="brand">
-      <div class="name">MALO</div>
-      <div class="tag">Arquitectos</div>
+      <img src="/logo-malo-blanco.png" alt="MALO Arquitectos">
     </header>
 
     <section class="copy">
