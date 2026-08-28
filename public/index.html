@@ -33,30 +33,6 @@
       z-index: 0;
     }
 
-    /* Mobile: fondo blanco, vídeo 100vw proporcional, contenido oscuro */
-    @media (max-width: 768px) {
-      html, body { background: #fff; }
-      .bg-video {
-        inset: auto;
-        top: 50%;
-        left: 0;
-        width: 100vw;
-        height: auto;
-        transform: translateY(-50%);
-        object-fit: contain;
-      }
-      .brand .name { color: #111; }
-      .brand .tag  { color: rgba(17,17,17,.7); }
-      .copy .line1 { color: #111; }
-      .copy .line2 { color: rgba(17,17,17,.75); }
-      .contact a {
-        color: #111;
-        border-color: rgba(17,17,17,.7);
-      }
-      .contact a:hover,
-      .contact a:active { background: #111; color: #fff; }
-    }
-
     .layer {
       position: absolute;
       inset: 0;
@@ -132,6 +108,30 @@
     }
     .contact a:hover { background: #fff; color: #000; }
     .contact a:active { background: #fff; color: #000; }
+
+    /* ===== Mobile: fondo blanco, vídeo 100vw proporcional, contenido oscuro ===== */
+    @media (max-width: 768px) {
+      html, body { background: #fff; }
+      .bg-video {
+        inset: auto;
+        top: 50%;
+        left: 0;
+        width: 100vw;
+        height: auto;
+        transform: translateY(-50%);
+        object-fit: contain;
+      }
+      .brand .name { color: #111; }
+      .brand .tag  { color: rgba(17,17,17,.7); }
+      .copy .line1 { color: #111; }
+      .copy .line2 { color: rgba(17,17,17,.75); }
+      .contact a {
+        color: #111;
+        border-color: rgba(17,17,17,.7);
+      }
+      .contact a:hover,
+      .contact a:active { background: #111; color: #fff; }
+    }
   </style>
 </head>
 <body>
