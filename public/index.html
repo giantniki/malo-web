@@ -68,6 +68,7 @@
       width: clamp(120px, 18vw, 220px);
       height: auto;
     }
+    .brand .logo-dark { display: none; }
 
     /* Copys — abajo a la izquierda */
     .copy {
@@ -116,7 +117,8 @@
     /* ===== Mobile: fondo blanco, vídeo 100vw proporcional, contenido oscuro ===== */
     @media (max-width: 768px) {
       html, body { background: #fff; }
-      .brand img { width: clamp(110px, 32vw, 160px); }
+      .brand .logo-light { display: none; }
+      .brand .logo-dark { display: block; }
       .bg-video {
         inset: auto;
         top: 50%;
@@ -145,7 +147,8 @@
     <video class="bg-video" src="/video.mp4" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video>
 
     <header class="brand">
-      <img src="/logo-malo-blanco.png" alt="MALO Arquitectos">
+      <img class="logo-light" src="/logo-malo-blanco.png" alt="MALO Arquitectos">
+      <img class="logo-dark" src="/logo-malo-negro.png" alt="MALO Arquitectos">
     </header>
 
     <section class="copy">
