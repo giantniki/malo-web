@@ -74,28 +74,31 @@
     }
     .brand .logo-light { display: none; }
 
-    /* Copys — abajo a la izquierda */
+    /* Copys — abajo a la izquierda, tamaño hero */
     .copy {
       position: absolute;
-      bottom: clamp(16px, 4vw, 48px);
+      bottom: clamp(16px, 5vh, 56px);
       left: clamp(16px, 4vw, 48px);
       z-index: 2;
-      max-width: min(26rem, 86vw);
+      max-width: min(46rem, 92vw);
     }
     .copy .line1 {
-      font-size: clamp(15px, 1.8vw, 20px);
-      font-weight: 600;
+      font-size: clamp(30px, 6vw, 78px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.01em;
       color: #111;
-      min-height: 1.5em;           /* evita salto de layout durante la animación */
-      text-shadow: 0 1px 3px rgba(255,255,255,.65), 0 0 14px rgba(255,255,255,.55);
+      min-height: 1.1em;            /* evita salto de layout durante la animación */
+      text-shadow: 0 2px 6px rgba(255,255,255,.8), 0 0 22px rgba(255,255,255,.7);
     }
     .copy .line2 {
-      margin-top: .55em;
-      font-size: clamp(13px, 1.5vw, 17px);
-      font-weight: 400;
-      color: rgba(17,17,17,.75);
-      min-height: 1.5em;
-      text-shadow: 0 1px 3px rgba(255,255,255,.65), 0 0 14px rgba(255,255,255,.55);
+      margin-top: .35em;
+      font-size: clamp(19px, 3.2vw, 42px);
+      font-weight: 500;
+      line-height: 1.15;
+      color: rgba(17,17,17,.82);
+      min-height: 1.2em;
+      text-shadow: 0 2px 6px rgba(255,255,255,.8), 0 0 22px rgba(255,255,255,.7);
     }
 
     /* Cursor typewriter */
@@ -107,6 +110,39 @@
     }
     .cursor.typing { display: inline; }
     @keyframes blink { 50% { opacity: 0; } }
+
+    /* Selector de idioma — arriba a la derecha, discreto */
+    .lang {
+      position: absolute;
+      top: clamp(16px, 4vw, 48px);
+      right: clamp(16px, 4vw, 48px);
+      z-index: 3;
+      display: flex;
+      gap: .25em;
+      padding: .3em .4em;
+      border-radius: 999px;
+      background: rgba(255,255,255,.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(17,17,17,.35);
+    }
+    .lang button {
+      pointer-events: auto;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font: 600 clamp(11px, 1.1vw, 13px)/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      letter-spacing: .08em;
+      color: rgba(17,17,17,.55);
+      padding: .45em .8em;
+      border-radius: 999px;
+      transition: color .2s ease, background .2s ease;
+    }
+    .lang button.active {
+      color: #fff;
+      background: #111;
+    }
 
     /* Botón — abajo a la derecha */
     .contact {
@@ -177,9 +213,14 @@
     </header>
 
     <section class="copy">
-      <p class="line1"><span class="txt" data-text="Construyendo la web."></span><span class="cursor" aria-hidden="true">|</span></p>
-      <p class="line2"><span class="txt" data-text="La obra no se detiene."></span><span class="cursor" aria-hidden="true">|</span></p>
+      <p class="line1"><span class="txt" data-i18n="line1"></span><span class="cursor" aria-hidden="true">|</span></p>
+      <p class="line2"><span class="txt" data-i18n="line2"></span><span class="cursor" aria-hidden="true">|</span></p>
     </section>
+
+    <nav class="lang" aria-label="Language">
+      <button type="button" data-lang="en" class="active">EN</button>
+      <button type="button" data-lang="es">ES</button>
+    </nav>
 
     <nav class="contact">
       <a href="mailto:hola@arquitectosmalo.com">Contacto</a>
@@ -194,48 +235,76 @@
     v.addEventListener('canplay', tryPlay);
     tryPlay();
 
-    // Typewriter — natural timing, respeta prefers-reduced-motion
-    (function typewriter() {
+    // Typewriter + idioma — natural timing, respeta prefers-reduced-motion
+    (function hero() {
+      const I18N = {
+        en: { line1: 'Building the website.', line2: 'The work never stops.', contact: 'Contact' },
+        es: { line1: 'Construyendo la web.', line2: 'La obra no se detiene.', contact: 'Contacto' }
+      };
       const lines = [...document.querySelectorAll('.copy .txt')];
       const cursors = [...document.querySelectorAll('.copy .cursor')];
       const contactLink = document.querySelector('.contact a');
-      const full = lines.map(l => l.dataset.text);
+      const langBtns = [...document.querySelectorAll('.lang button')];
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let timer = null;
+      let lang = 'en'; // inglés por defecto
 
-      if (reduced) {
-        // Sin animación: texto directo + contacto visible
-        lines.forEach((l, i) => l.textContent = full[i]);
+      function showInstant(t) {
+        // Sin animación (reduced motion): texto directo + contacto visible
+        clearTimeout(timer);
+        lines.forEach((el, i) => {
+          el.textContent = t[['line1','line2'][i]];
+          el.nextElementSibling.classList.remove('typing');
+        });
+        contactLink.textContent = t.contact;
         contactLink.classList.add('visible');
-        return;
       }
 
-      const base = 55, jitter = 40, pauseBetweenLines = 550;
-      let li = 0;
+      function typeSequence(t) {
+        clearTimeout(timer);
+        lines.forEach(el => el.textContent = '');
+        contactLink.classList.remove('visible');   // compite menos con la animación
+        contactLink.textContent = t.contact;
+        const full = [t.line1, t.line2];
+        const base = 55, jitter = 40, pauseBetweenLines = 550;
+        let li = 0;
 
-      function typeLine() {
-        const txt = full[li];
-        const el = lines[li];
-        const cur = cursors[li];
-        cur.classList.add('typing');
-        let ci = 0;
-        (function step() {
-          el.textContent = txt.slice(0, ++ci);
-          if (ci < txt.length) {
-            // timing natural: base + variación aleatoria, micro-pausas tras puntuación
-            const extra = /[.,:]/.test(txt[ci-1]) ? 260 : 0;
-            setTimeout(step, base + Math.random() * jitter + extra);
-          } else {
-            cur.classList.remove('typing');
-            li++;
-            if (li < lines.length) {
-              setTimeout(typeLine, pauseBetweenLines);
+        (function typeLine() {
+          const txt = full[li], el = lines[li], cur = cursors[li];
+          cur.classList.add('typing');
+          let ci = 0;
+          (function step() {
+            el.textContent = txt.slice(0, ++ci);
+            if (ci < txt.length) {
+              const extra = /[.,:]/.test(txt[ci-1]) ? 260 : 0;
+              timer = setTimeout(step, base + Math.random() * jitter + extra);
             } else {
-              contactLink.classList.add('visible'); // fade-in del contacto al terminar
+              cur.classList.remove('typing');
+              li++;
+              if (li < full.length) {
+                timer = setTimeout(typeLine, pauseBetweenLines);
+              } else {
+                contactLink.classList.add('visible'); // fade-in al terminar
+              }
             }
-          }
+          })();
         })();
       }
-      setTimeout(typeLine, 400); // pequeña espera inicial para que cargue el vídeo
+
+      function setLang(next, animate) {
+        lang = next;
+        const t = I18N[next];
+        langBtns.forEach(b => b.classList.toggle('active', b.dataset.lang === next));
+        if (animate && !reduced) typeSequence(t);
+        else showInstant(t);
+      }
+
+      langBtns.forEach(b => b.addEventListener('click', () => {
+        if (b.dataset.lang !== lang) setLang(b.dataset.lang, true);
+      }));
+
+      // Primera carga: inglés + animación
+      setLang('en', true);
     })();
   </script>
   </body>
