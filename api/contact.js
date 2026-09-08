@@ -1,12 +1,23 @@
 // API route: POST /api/contact — envía email vía Resend sin salir de la web
-// Destinatarios: todos reciben cada envío.
-const TO = [
-  'hola@malo.works',
-  'alfonso.megino@malo.works',
-  'Juan.ruiz@malo.works',
-  'juan@valmesolutions.com',
-];
-const FROM = 'MALO Web <hola@malo.works>';
+//
+// Configuración por env vars (nada hardcodeado):
+//   RESEND_API_KEY  → obligatoria (Vercel → Settings → Environment Variables)
+//   RESEND_FROM     → remitente. Por defecto 'MALO Web <onboarding@resend.dev>'
+//                     (fase de pruebas: solo llega al email con el que abriste
+//                     la cuenta de Resend). Cuando malo.works esté verificado:
+//                     RESEND_FROM='MALO Web <hola@malo.works>'
+//   RESEND_TO       → destinatarios separados por coma. Por defecto los 4 de
+//                     producción. Para la primera prueba con onboarding@:
+//                     RESEND_TO='tu-email-de-cuenta-resend' (uno solo).
+//
+// DNS (Resend → Domains → Add domain malo.works): copia EXACTAMENTE los
+// registros que genere el dashboard (DKIM TXT/CNAME y MX específicos de
+// región, p.ej. feedback-smtp.eu-west-1.amazonses.com). Todo va bajo
+// send.malo.works — el SPF raíz de Outlook NO se toca.
+const FROM = process.env.RESEND_FROM || 'MALO Web <onboarding@resend.dev>';
+const TO = (process.env.RESEND_TO ||
+  'hola@malo.works,alfonso.megino@malo.works,Juan.ruiz@malo.works,juan@valmesolutions.com'
+).split(',').map(s => s.trim()).filter(Boolean);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export default async function handler(req, res) {
