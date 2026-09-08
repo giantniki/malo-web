@@ -81,6 +81,13 @@
       left: clamp(16px, 4vw, 48px);
       z-index: 2;
       max-width: min(46rem, 92vw);
+      /* scrim claro + blur: contraste del texto sobre cualquier fotograma del vídeo */
+      background: rgba(255,255,255,.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: clamp(14px, 2.2vw, 28px) clamp(18px, 2.6vw, 34px);
+      box-shadow: 0 4px 24px rgba(17,17,17,.08);
     }
     .copy .line1 {
       font-size: clamp(30px, 6vw, 78px);
@@ -89,16 +96,17 @@
       letter-spacing: -0.01em;
       color: #111;
       min-height: 1.1em;            /* evita salto de layout durante la animación */
-      text-shadow: 0 2px 6px rgba(255,255,255,.8), 0 0 22px rgba(255,255,255,.7);
+      /* sombra blanca (eleva) + filo oscuro sutil (define el borde de la letra) */
+      text-shadow: 0 1px 2px rgba(255,255,255,.95), 0 0 1px rgba(17,17,17,.18);
     }
     .copy .line2 {
       margin-top: .35em;
       font-size: clamp(19px, 3.2vw, 42px);
       font-weight: 500;
       line-height: 1.15;
-      color: rgba(17,17,17,.82);
+      color: rgba(17,17,17,.88);
       min-height: 1.2em;
-      text-shadow: 0 2px 6px rgba(255,255,255,.8), 0 0 22px rgba(255,255,255,.7);
+      text-shadow: 0 1px 2px rgba(255,255,255,.95), 0 0 1px rgba(17,17,17,.15);
     }
 
     /* Cursor typewriter */
@@ -177,6 +185,130 @@
     .contact a:hover { background: #111; color: #fff; }
     .contact a:active { background: #111; color: #fff; }
 
+    /* ===== Formulario de contacto (modal interno) ===== */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 48px);
+      background: rgba(17,17,17,.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-card {
+      position: relative;
+      width: min(26rem, 100%);
+      background: #fff;
+      border-radius: 16px;
+      padding: clamp(24px, 4vw, 36px);
+      box-shadow: 0 24px 64px rgba(17,17,17,.35);
+      transform: translateY(12px) scale(.98);
+      transition: transform .3s ease;
+    }
+    .modal.open .modal-card { transform: translateY(0) scale(1); }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1;
+      color: rgba(17,17,17,.55);
+      padding: 6px;
+    }
+    .modal-card h2 {
+      font-size: clamp(20px, 2.6vw, 26px);
+      font-weight: 700;
+      color: #111;
+      margin-bottom: .4em;
+    }
+    .modal-card .subtitle {
+      font-size: 14px;
+      color: rgba(17,17,17,.65);
+      margin-bottom: 1.4em;
+    }
+    .field { margin-bottom: 1.1em; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(17,17,17,.6);
+      margin-bottom: .45em;
+    }
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid rgba(17,17,17,.25);
+      border-radius: 10px;
+      padding: .7em .9em;
+      font: 400 15px/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #111;
+      background: #fff;
+      transition: border-color .2s ease;
+    }
+    .field input:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: #111;
+    }
+    .field textarea { min-height: 96px; resize: vertical; }
+    .field .error {
+      display: none;
+      font-size: 12px;
+      color: #b3261e;
+      margin-top: .35em;
+    }
+    .field.invalid .error { display: block; }
+    .field.invalid input,
+    .field.invalid textarea { border-color: #b3261e; }
+    .hp {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .submit-btn {
+      width: 100%;
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      background: #111;
+      color: #fff;
+      font: 600 15px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .95em 1em;
+      border-radius: 999px;
+      transition: background .2s ease, opacity .2s ease;
+    }
+    .submit-btn:hover:not(:disabled) { background: #000; }
+    .submit-btn:disabled { opacity: .55; cursor: wait; }
+    .form-status {
+      display: none;
+      margin-top: 1em;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .form-status.sending { display: block; color: rgba(17,17,17,.65); }
+    .form-status.ok { display: block; color: #1e7a35; }
+    .form-status.err { display: block; color: #b3261e; }
+
     /* ===== Mobile: fondo blanco, vídeo 100vw proporcional, contenido oscuro ===== */
     @media (max-width: 768px) {
       html, body { background: #fff; }
@@ -223,8 +355,41 @@
     </nav>
 
     <nav class="contact">
-      <a href="mailto:hola@arquitectosmalo.com">Contacto</a>
+      <a href="#contact-form">Contact</a>
     </nav>
+
+    <!-- Formulario interno (modal) -->
+    <div class="modal" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-card">
+        <button type="button" class="modal-close" aria-label="Cerrar">×</button>
+        <h2 id="modal-title">Escríbenos</h2>
+        <p class="subtitle">Cuéntanos tu proyecto y te respondemos a la brevedad.</p>
+        <form id="contact-form" novalidate>
+          <div class="field">
+            <label for="f-name">Nombre</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required>
+            <span class="error">Dinos tu nombre.</span>
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required>
+            <span class="error">Necesitamos un email válido.</span>
+          </div>
+          <div class="field">
+            <label for="f-msg">Mensaje</label>
+            <textarea id="f-msg" name="message" required></textarea>
+            <span class="error">Cuéntanos algo de tu proyecto.</span>
+          </div>
+          <!-- honeypot anti-spam: invisible para humanos, tentador para bots -->
+          <div class="hp" aria-hidden="true">
+            <label for="f-company">Company</label>
+            <input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <button type="submit" class="submit-btn">Enviar</button>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
   </main>
 
   <script>
@@ -234,6 +399,72 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) tryPlay(); });
     v.addEventListener('canplay', tryPlay);
     tryPlay();
+
+    // Formulario interno: modal + fetch AJAX (nunca sale de la página)
+    (function contactForm() {
+      const modal = document.getElementById('contact-modal');
+      const openers = [...document.querySelectorAll('.contact a')];
+      const closeBtn = modal.querySelector('.modal-close');
+      const form = document.getElementById('contact-form');
+      const status = form.querySelector('.form-status');
+      const submitBtn = form.querySelector('.submit-btn');
+      const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+      function open() { modal.classList.add('open'); }
+      function close() { modal.classList.remove('open'); }
+      openers.forEach(a => a.addEventListener('click', e => { e.preventDefault(); open(); }));
+      closeBtn.addEventListener('click', close);
+      modal.addEventListener('click', e => { if (e.target === modal) close(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+      function validate() {
+        let ok = true;
+        form.querySelectorAll('.field').forEach(f => {
+          const input = f.querySelector('input,textarea');
+          const valid = input.name === 'email'
+            ? EMAIL_RE.test(input.value.trim())
+            : input.value.trim().length >= 2;
+          f.classList.toggle('invalid', !valid);
+          if (!valid) ok = false;
+        });
+        return ok;
+      }
+      form.querySelectorAll('input,textarea').forEach(i =>
+        i.addEventListener('input', () => i.closest('.field').classList.remove('invalid')));
+
+      function setStatus(mode, msg) {
+        status.className = 'form-status ' + mode;
+        status.textContent = msg;
+      }
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        if (form.company.value) return;          // honeypot: bot detectado, fingir éxito
+        if (!validate()) return;
+
+        submitBtn.disabled = true;
+        setStatus('sending', 'Enviando…');
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: form.name.value.trim(),
+              email: form.email.value.trim(),
+              message: form.message.value.trim()
+            })
+          });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          setStatus('ok', '✓ Enviado. Te respondemos muy pronto.');
+          form.reset();
+          setTimeout(close, 2200);
+        } catch (err) {
+          setStatus('err', 'No se pudo enviar. Inténtalo de nuevo o escribe a hola@malo.works');
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+    })();
 
     // Typewriter + idioma — natural timing, respeta prefers-reduced-motion
     (function hero() {
