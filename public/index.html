@@ -74,20 +74,13 @@
     }
     .brand .logo-light { display: none; }
 
-    /* Copys — abajo a la izquierda, tamaño hero */
+    /* Copys — abajo a la izquierda, tamaño hero (sin overlay general) */
     .copy {
       position: absolute;
       bottom: clamp(16px, 5vh, 56px);
       left: clamp(16px, 4vw, 48px);
       z-index: 2;
       max-width: min(46rem, 92vw);
-      /* scrim claro + blur: contraste del texto sobre cualquier fotograma del vídeo */
-      background: rgba(255,255,255,.55);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 14px;
-      padding: clamp(14px, 2.2vw, 28px) clamp(18px, 2.6vw, 34px);
-      box-shadow: 0 4px 24px rgba(17,17,17,.08);
     }
     .copy .line1 {
       font-size: clamp(30px, 6vw, 78px);
@@ -96,7 +89,7 @@
       letter-spacing: -0.01em;
       color: #111;
       min-height: 1.1em;            /* evita salto de layout durante la animación */
-      /* sombra blanca (eleva) + filo oscuro sutil (define el borde de la letra) */
+      /* línea 1: sin fondo, directo sobre el vídeo */
       text-shadow: 0 1px 2px rgba(255,255,255,.95), 0 0 1px rgba(17,17,17,.18);
     }
     .copy .line2 {
@@ -106,7 +99,17 @@
       line-height: 1.15;
       color: rgba(17,17,17,.88);
       min-height: 1.2em;
-      text-shadow: 0 1px 2px rgba(255,255,255,.95), 0 0 1px rgba(17,17,17,.15);
+    }
+    /* pill de contraste SOLO en la línea 2, ceñida al texto: sin texto no hay caja visible */
+    .copy .line2 .txt {
+      display: inline-block;
+      max-width: 100%;
+      background: rgba(255,255,255,.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: .12em .35em;
+      text-shadow: 0 1px 2px rgba(255,255,255,.95);
     }
 
     /* Cursor typewriter */
