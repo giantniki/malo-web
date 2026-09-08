@@ -80,19 +80,33 @@
       bottom: clamp(16px, 4vw, 48px);
       left: clamp(16px, 4vw, 48px);
       z-index: 2;
-      max-width: min(24rem, 70vw);
+      max-width: min(26rem, 86vw);
     }
     .copy .line1 {
       font-size: clamp(15px, 1.8vw, 20px);
       font-weight: 600;
       color: #111;
+      min-height: 1.5em;           /* evita salto de layout durante la animación */
+      text-shadow: 0 1px 3px rgba(255,255,255,.65), 0 0 14px rgba(255,255,255,.55);
     }
     .copy .line2 {
       margin-top: .55em;
       font-size: clamp(13px, 1.5vw, 17px);
       font-weight: 400;
       color: rgba(17,17,17,.75);
+      min-height: 1.5em;
+      text-shadow: 0 1px 3px rgba(255,255,255,.65), 0 0 14px rgba(255,255,255,.55);
     }
+
+    /* Cursor typewriter */
+    .cursor {
+      display: none;
+      font-weight: 400;
+      color: #111;
+      animation: blink 1s steps(1) infinite;
+    }
+    .cursor.typing { display: inline; }
+    @keyframes blink { 50% { opacity: 0; } }
 
     /* Botón — abajo a la derecha */
     .contact {
@@ -104,24 +118,34 @@
     .contact a {
       display: inline-block;
       pointer-events: auto;
-      font-size: clamp(13px, 1.4vw, 15px);
+      font-size: clamp(14px, 1.6vw, 17px);
       font-weight: 600;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #fff;
+      color: #111;
       text-decoration: none;
-      border: 1px solid rgba(255,255,255,.7);
-      padding: .75em 1.6em;
+      background: rgba(255,255,255,.82);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(17,17,17,.75);
+      padding: .8em 1.7em;
       border-radius: 999px;
-      transition: background .25s ease, color .25s ease;
+      transition: background .25s ease, color .25s ease, transform .25s ease, opacity .8s ease;
+      opacity: 0;                    /* fade-in tras el typewriter */
+      transform: translateY(8px);
     }
-    .contact a:hover { background: #fff; color: #000; }
-    .contact a:active { background: #fff; color: #000; }
+    .contact a.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .contact a:hover { background: #111; color: #fff; }
+    .contact a:active { background: #111; color: #fff; }
 
     /* ===== Mobile: fondo blanco, vídeo 100vw proporcional, contenido oscuro ===== */
     @media (max-width: 768px) {
       html, body { background: #fff; }
       .brand .logo-dark { display: block; }
+      .copy { max-width: 88vw; }
       .bg-video {
         inset: auto;
         top: 50%;
@@ -131,14 +155,12 @@
         transform: translateY(-50%) scale(1.2); /* 1,2× más grande, centrado */
         object-fit: contain;
       }
-      .brand .name { color: #111; }
-      .brand .tag  { color: rgba(17,17,17,.7); }
-      .brand img { width: clamp(110px, 32vw, 160px); }
-      .copy .line1 { color: #111; }
-      .copy .line2 { color: rgba(17,17,17,.75); }
+      .copy .line1 { color: #111; text-shadow: none; }
+      .copy .line2 { color: rgba(17,17,17,.75); text-shadow: none; }
       .contact a {
+        background: rgba(255,255,255,.9);
         color: #111;
-        border-color: rgba(17,17,17,.7);
+        border-color: rgba(17,17,17,.75);
       }
       .contact a:hover,
       .contact a:active { background: #111; color: #fff; }
@@ -155,8 +177,8 @@
     </header>
 
     <section class="copy">
-      <p class="line1">Web en construcción</p>
-      <p class="line2">Mientras tanto, la obra sigue.</p>
+      <p class="line1"><span class="txt" data-text="Construyendo la web."></span><span class="cursor" aria-hidden="true">|</span></p>
+      <p class="line2"><span class="txt" data-text="La obra no se detiene."></span><span class="cursor" aria-hidden="true">|</span></p>
     </section>
 
     <nav class="contact">
@@ -171,6 +193,50 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) tryPlay(); });
     v.addEventListener('canplay', tryPlay);
     tryPlay();
+
+    // Typewriter — natural timing, respeta prefers-reduced-motion
+    (function typewriter() {
+      const lines = [...document.querySelectorAll('.copy .txt')];
+      const cursors = [...document.querySelectorAll('.copy .cursor')];
+      const contactLink = document.querySelector('.contact a');
+      const full = lines.map(l => l.dataset.text);
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (reduced) {
+        // Sin animación: texto directo + contacto visible
+        lines.forEach((l, i) => l.textContent = full[i]);
+        contactLink.classList.add('visible');
+        return;
+      }
+
+      const base = 55, jitter = 40, pauseBetweenLines = 550;
+      let li = 0;
+
+      function typeLine() {
+        const txt = full[li];
+        const el = lines[li];
+        const cur = cursors[li];
+        cur.classList.add('typing');
+        let ci = 0;
+        (function step() {
+          el.textContent = txt.slice(0, ++ci);
+          if (ci < txt.length) {
+            // timing natural: base + variación aleatoria, micro-pausas tras puntuación
+            const extra = /[.,:]/.test(txt[ci-1]) ? 260 : 0;
+            setTimeout(step, base + Math.random() * jitter + extra);
+          } else {
+            cur.classList.remove('typing');
+            li++;
+            if (li < lines.length) {
+              setTimeout(typeLine, pauseBetweenLines);
+            } else {
+              contactLink.classList.add('visible'); // fade-in del contacto al terminar
+            }
+          }
+        })();
+      }
+      setTimeout(typeLine, 400); // pequeña espera inicial para que cargue el vídeo
+    })();
   </script>
   </body>
 </html>
